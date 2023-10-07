@@ -36,6 +36,7 @@ public class PacienteService {
 
         pacienteAntigo.setNome(paciente.getNome());
         pacienteAntigo.setSobrenome(paciente.getSobrenome());
+        pacienteAntigo.setCpf(paciente.getSobrenome());
         pacienteAntigo.setDataDeNascimento(paciente.getDataDeNascimento());
         pacienteAntigo.setGenero(paciente.getGenero());
         pacienteAntigo.setContatos(paciente.getContatos());

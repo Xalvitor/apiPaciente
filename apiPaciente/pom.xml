@@ -55,6 +55,10 @@
 			<artifactId>jackson-datatype-jsr310</artifactId>
 			<version>2.13.5</version>
 		</dependency>
+		<dependency>
+			<groupId>org.hibernate.validator</groupId>
+			<artifactId>hibernate-validator</artifactId>
+		</dependency>
     </dependencies>
 	<dependencyManagement>
 		<dependencies>
@@ -65,7 +69,6 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
-
 		</dependencies>
 	</dependencyManagement>
 
