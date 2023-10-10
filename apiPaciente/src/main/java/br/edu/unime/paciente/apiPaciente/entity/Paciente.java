@@ -3,12 +3,14 @@ package br.edu.unime.paciente.apiPaciente.entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.br.CPF;
 import org.springframework.data.annotation.Id;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -24,6 +26,7 @@ public class Paciente {
     @NotBlank(message = "Sobrenome não pode estar em branco.")
     private String sobrenome;
 
+    @CPF
     @NotBlank(message = "CPF não pode estar em branco.")
     private String cpf;
 

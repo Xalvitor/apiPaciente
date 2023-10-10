@@ -4,7 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.Valid;
+
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -17,8 +18,9 @@ public class Endereco {
     @NotBlank(message = "Logradouro não pode estar em branco.")
     private String Logradouro;
 
+
     @NotNull(message = "Numero não pode estar em branco.")
-    private int Numero;
+    private Integer Numero;
 
     @NotBlank(message = "Bairro não pode estar em branco.")
     private String Bairro;
