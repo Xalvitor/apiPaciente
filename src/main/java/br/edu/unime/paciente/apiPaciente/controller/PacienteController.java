@@ -13,6 +13,7 @@ import java.util.*;
 
 import lombok.Data;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 @Data
@@ -25,13 +26,16 @@ public class PacienteController {
     PacienteService pacienteService;
     @GetMapping
     public ResponseEntity<List<Paciente>> obterTodos(){
+        int statusCode = HttpServletResponse.SC_OK;
+        pacienteService.registrarLog("GET" , "Buscar Pacientes", pacienteService.obterTodos().toString(), statusCode);
         return ResponseEntity.ok().body(pacienteService.obterTodos());
     }
     @GetMapping("/{id}")
     public ResponseEntity<?> encontrarPaciente(@PathVariable String id) {
         try{
             Paciente paciente = pacienteService.encontrarPaciente(id);
-
+            int statusCode = HttpServletResponse.SC_OK;
+            pacienteService.registrarLog("GET" , "Buscar Paciente pelo id", id , statusCode);
             return ResponseEntity.ok().body(paciente);
 
         } catch (Exception e) {
@@ -39,7 +43,8 @@ public class PacienteController {
             Map<String, String> resposta = new HashMap<>();
 
             resposta.put("mensagem", e.getMessage());
-
+            int statusCode = HttpServletResponse.SC_NOT_FOUND;
+            pacienteService.registrarLog("GET" , "Buscar Paciente pelo id" ,"Erro ao buscar Paciente pelo id: "+id, statusCode);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(resposta);
         }
 
@@ -55,10 +60,15 @@ public class PacienteController {
                     .stream()
                     .map(DefaultMessageSourceResolvable::getDefaultMessage)
                     .toList();
+            int statusCode = HttpServletResponse.SC_BAD_GATEWAY;
+            pacienteService.registrarLog("POST" , "Erro ao adicionar Paciente", "Objeto: "+ paciente , statusCode);
 
             return ResponseEntity.badRequest().body(erros.toArray());
         }
         pacienteService.inserir(paciente);
+
+        int statusCode = HttpServletResponse.SC_CREATED;
+        pacienteService.registrarLog("POST" , "Adicionar Paciente", "Objeto: "+ paciente , statusCode);
 
         return ResponseEntity.created(null).body(paciente);
     }
@@ -70,10 +80,17 @@ public class PacienteController {
         try {
             Paciente pacienteAtualizado = pacienteService.atualizar(id, paciente);
 
+            int statusCode = HttpServletResponse.SC_OK;
+            pacienteService.registrarLog("PUT" , "Atualizar Cadastro do Paciente",paciente + " pelo id: "+ id , statusCode);
+
             return ResponseEntity.ok().body(pacienteAtualizado);
         } catch (Exception e) {
             Map<String, String> resposta = new HashMap<>();
             resposta.put("mensagem", e.getMessage());
+
+            int statusCode = HttpServletResponse.SC_NOT_FOUND;
+            pacienteService.registrarLog("PUT" , "Atualizar Paciente" ,"Erro ao atualizar Paciente" + paciente + " pelo id: "+ id, statusCode);
+
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
@@ -85,10 +102,17 @@ public class PacienteController {
         try {
             pacienteService.deletar(id);
 
+            int statusCode = HttpServletResponse.SC_NO_CONTENT;
+            pacienteService.registrarLog("DELETE" , "Deletar Paciente por id", "Id do Paciente: "+id, statusCode);
+
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
             Map<String, String> resposta = new HashMap<>();
             resposta.put("mensagem", e.getMessage());
+
+            int statusCode = HttpServletResponse.SC_NOT_FOUND;
+            pacienteService.registrarLog("DELETE" , "Erro ao deletar Paciente por id", "Id do Paciente"+ id, statusCode);
+
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
