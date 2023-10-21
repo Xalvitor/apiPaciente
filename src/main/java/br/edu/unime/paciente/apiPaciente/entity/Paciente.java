@@ -7,10 +7,7 @@ import org.hibernate.validator.constraints.br.CPF;
 import org.springframework.data.annotation.Id;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
+import javax.validation.constraints.*;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -22,7 +19,10 @@ public class Paciente {
     @Id
     private String id;
     @NotBlank(message = "Nome não pode estar em branco.")
+    @Size(min = 2, max = 100, message = "O nome deve ter entre 2 a 100 digitos")
     private String nome;
+
+    @Size(min = 2, max = 100, message = "O sobrenome deve ter entre 2 a 100 digitos")
     @NotBlank(message = "Sobrenome não pode estar em branco.")
     private String sobrenome;
 
