@@ -54,15 +54,6 @@ public class PacienteService {
 
     @Cacheable("pacienteCache")
     public Paciente encontrarPaciente(String id) throws Exception {
-        Cache cache = cacheManager.getCache("pacienteCache");
-
-        if (cache != null){
-            Cache.ValueWrapper valorBuscaId = cache.get(id);
-            if (valorBuscaId != null) {
-                Paciente paciente = (Paciente) valorBuscaId.get();
-                return paciente;
-            }
-        }
 
         Optional<Paciente> pacienteOptional = pacienteRepository.findById(id);
 

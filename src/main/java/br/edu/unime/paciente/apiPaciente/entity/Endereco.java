@@ -19,7 +19,6 @@ public class Endereco {
     @NotBlank(message = "Logradouro não pode estar em branco.")
     private String Logradouro;
 
-
     @NotNull(message = "Numero não pode estar em branco.")
     @Min(value = 1, message = "Número deve ser no mínimo um.")
     private Integer Numero;
