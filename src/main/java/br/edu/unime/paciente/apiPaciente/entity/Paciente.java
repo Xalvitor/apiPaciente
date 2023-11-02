@@ -42,4 +42,19 @@ public class Paciente {
     @NotEmpty(message = "Enderecos não pode estar em branco.")
     private List<Endereco> enderecos;
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public List<Endereco> getEnderecos() {
+        return enderecos;
+    }
+
+    public void setEnderecos(List<Endereco> enderecos) {
+        this.enderecos = enderecos;
+    }
 }

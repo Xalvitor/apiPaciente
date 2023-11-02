@@ -50,7 +50,6 @@ public class PacienteController {
 
     }
     @PostMapping
-
     public ResponseEntity<?> inserir(@RequestBody @Valid Paciente paciente, BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()){
@@ -65,12 +64,14 @@ public class PacienteController {
 
             return ResponseEntity.badRequest().body(erros.toArray());
         }
-        pacienteService.inserir(paciente);
+            pacienteService.inserir(paciente);
 
-        int statusCode = HttpServletResponse.SC_CREATED;
-        pacienteService.registrarLog("POST" , "Adicionar Paciente", "Objeto: "+ paciente , statusCode);
+            int statusCode = HttpServletResponse.SC_CREATED;
+            pacienteService.registrarLog("POST" , "Adicionar Paciente", "Objeto: "+ paciente , statusCode);
 
-        return ResponseEntity.created(null).body(paciente);
+            return ResponseEntity.created(null).body(paciente);
+
+
     }
     @PutMapping("/{id}")
     public ResponseEntity<?> atualizar(

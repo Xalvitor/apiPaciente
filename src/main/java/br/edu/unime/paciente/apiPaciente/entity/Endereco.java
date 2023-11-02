@@ -28,14 +28,11 @@ public class Endereco {
 
     @NotBlank(message = "CEP não pode estar em branco.")
     @Pattern(regexp = "\\d{8}", message = "CEP deve conter 8 dígitos.")
-    private String CEP;
+    private String Cep;
 
     @NotBlank(message = "Municipio não pode estar em branco.")
     private String Municipio;
 
     @NotBlank(message = "Estado não pode estar em branco.")
     private String Estado;
-
-
-
 }
