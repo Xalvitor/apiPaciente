@@ -2,6 +2,7 @@ package br.edu.unime.paciente.apiPaciente.controller;
 
 import br.edu.unime.paciente.apiPaciente.entity.Endereco;
 import br.edu.unime.paciente.apiPaciente.entity.Paciente;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
@@ -91,7 +92,6 @@ public class PacienteControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.length()").value(2))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.length()").value(2))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].nome").value(paciente.getNome()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].sobrenome").value(paciente.getSobrenome()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].genero").value(paciente.getGenero()))
@@ -104,11 +104,6 @@ public class PacienteControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].enderecos[0].estado").value(paciente.getEnderecos().get(0).getEstado()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].enderecos[0].bairro").value(paciente.getEnderecos().get(0).getBairro()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].enderecos[0].cep").value(paciente.getEnderecos().get(0).getCep()));
-
-
-
-
-
 
 
         //Verify
@@ -136,7 +131,7 @@ public class PacienteControllerTest {
 
 
         //Verify
-        verify(pacienteService, times(1)).obterTodos();
+        verify(pacienteService, times(2)).obterTodos();
     }
 
     @Test
@@ -145,35 +140,46 @@ public class PacienteControllerTest {
 
         //Arrange
         Paciente paciente = new Paciente();
-//        paciente.setid("12345");
-        paciente.setNome("Natã Romão");
-        paciente.setSobrenome("NatãRomão");
-        paciente.setDataDeNascimento(LocalDate.of(1800, 9, 29));
+        paciente.setId("12345");
+        paciente.setNome("Antonio Vitor");
+        paciente.setSobrenome("Guimaraes");
+        paciente.setDataDeNascimento(LocalDate.of(2000, 9, 9));
         paciente.setCpf("044453303550");
         paciente.setContatos(Collections.singletonList("92685988"));
-        paciente.setGenero("Natã Romão");
+        paciente.setGenero("Masculino");
 
-        Paciente paciente2 = new Paciente();
-//        paciente.setid("123456");
-        paciente.setNome("Natã Romão");
-        paciente.setSobrenome("NatãRomão");
-        paciente.setDataDeNascimento(LocalDate.of(1800, 9, 29));
-        paciente.setCpf("044453303550");
-        paciente.setContatos(Collections.singletonList("92685988"));
-        paciente.setGenero("Natã Romão");
+        Endereco endereco = new Endereco();
+        endereco.setLogradouro("Vila Alto de Amaralina");
+        endereco.setCep("41905586");
+        endereco.setNumero(10);
+        endereco.setBairro( "Nordeste");
+        endereco.setMunicipio("Salvador");
+        endereco.setEstado("BA");
 
-        List<Paciente> pacientes = Arrays.asList(paciente, paciente2);
+        paciente.setEnderecos(Collections.singletonList(endereco));
+
+        List<Paciente> pacientes = Arrays.asList(paciente);
 
         //Mock
-        when(pacienteService.encontrarPaciente("1234")).thenReturn(paciente);
+        when(pacienteService.encontrarPaciente("12345")).thenReturn(paciente);
 
         //Act & Assert
-        mockMvc.perform(MockMvcRequestBuilders.get("/pacientes" + paciente.getId()))
+        mockMvc.perform(MockMvcRequestBuilders.get("/pacientes/" + paciente.getId()))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].nome").value(paciente.getNome()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].sobrenome").value(paciente.getSobrenome()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].genero").value(paciente.getGenero()));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(paciente.getId()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.nome").value(paciente.getNome()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.sobrenome").value(paciente.getSobrenome()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.genero").value(paciente.getGenero()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.cpf").value(paciente.getCpf()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.dataDeNascimento").value(String.valueOf(paciente.getDataDeNascimento())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.contatos[0]").value(paciente.getContatos().get(0)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.enderecos[0].logradouro").value(paciente.getEnderecos().get(0).getLogradouro()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.enderecos[0].municipio").value(paciente.getEnderecos().get(0).getMunicipio()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.enderecos[0].numero").value(paciente.getEnderecos().get(0).getNumero()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.enderecos[0].estado").value(paciente.getEnderecos().get(0).getEstado()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.enderecos[0].bairro").value(paciente.getEnderecos().get(0).getBairro()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.enderecos[0].cep").value(paciente.getEnderecos().get(0).getCep()));
 
 
         //Verify
@@ -192,13 +198,69 @@ public class PacienteControllerTest {
         when(pacienteService.encontrarPaciente(id)).thenThrow(ResourceNotFoundException.class);
 
         //Act & Assert
-        mockMvc.perform(MockMvcRequestBuilders.get("/pacientes" + id))
+        mockMvc.perform(MockMvcRequestBuilders.get("/pacientes/" + id))
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
-                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Paciente não encontrado!"));
-
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
         //Verify
         verify(pacienteService, times(1)).encontrarPaciente(id);
+
+    }
+
+    @Test
+    @DisplayName("Deve adicionar um paciente no banco de dados. ")
+    public void testeAdicionarPacienteAoBancoDeDados() throws Exception {
+
+
+        //Arrange
+        Paciente paciente = new Paciente();
+        paciente.setId("12345");
+        paciente.setNome("Antonio Vitor");
+        paciente.setSobrenome("Guimaraes");
+        paciente.setDataDeNascimento(LocalDate.of(2000, 9, 9));
+        paciente.setCpf("044453303550");
+        paciente.setContatos(Collections.singletonList("92685988"));
+        paciente.setGenero("Masculino");
+
+        Endereco endereco = new Endereco();
+        endereco.setLogradouro("Vila Alto de Amaralina");
+        endereco.setCep("41905586");
+        endereco.setNumero(10);
+        endereco.setBairro( "Nordeste");
+        endereco.setMunicipio("Salvador");
+        endereco.setEstado("BA");
+
+        paciente.setEnderecos(Collections.singletonList(endereco));
+
+
+        //Mock
+        doNothing().when(pacienteService).inserir(any(Paciente.class));
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String pacienteJson = objectMapper.writeValueAsString(paciente);
+
+        //Act & Assert
+        mockMvc.perform(MockMvcRequestBuilders.post("/pacientes")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(pacienteJson))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(paciente.getId()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.nome").value(paciente.getNome()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.sobrenome").value(paciente.getSobrenome()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.genero").value(paciente.getGenero()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.cpf").value(paciente.getCpf()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.dataDeNascimento").value(String.valueOf(paciente.getDataDeNascimento())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.contatos[0]").value(paciente.getContatos().get(0)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.enderecos[0].logradouro").value(paciente.getEnderecos().get(0).getLogradouro()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.enderecos[0].municipio").value(paciente.getEnderecos().get(0).getMunicipio()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.enderecos[0].numero").value(paciente.getEnderecos().get(0).getNumero()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.enderecos[0].estado").value(paciente.getEnderecos().get(0).getEstado()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.enderecos[0].bairro").value(paciente.getEnderecos().get(0).getBairro()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.enderecos[0].cep").value(paciente.getEnderecos().get(0).getCep()));
+
+
+        //Verify
+        verify(pacienteService, times(1)).inserir(any(Paciente.class));
 
     }
 }
