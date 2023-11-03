@@ -3,6 +3,8 @@ package br.edu.unime.paciente.apiPaciente.controller;
 import br.edu.unime.paciente.apiPaciente.entity.Endereco;
 import br.edu.unime.paciente.apiPaciente.entity.Paciente;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
@@ -29,6 +31,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
@@ -50,7 +53,7 @@ public class PacienteControllerTest {
         paciente.setNome("Antonio Vitor");
         paciente.setSobrenome("Guimaraes");
         paciente.setDataDeNascimento(LocalDate.of(2000, 9, 9));
-        paciente.setCpf("044453303550");
+        paciente.setCpf("04445303550");
         paciente.setContatos(Collections.singletonList("92685988"));
         paciente.setGenero("Masculino");
 
@@ -144,7 +147,7 @@ public class PacienteControllerTest {
         paciente.setNome("Antonio Vitor");
         paciente.setSobrenome("Guimaraes");
         paciente.setDataDeNascimento(LocalDate.of(2000, 9, 9));
-        paciente.setCpf("044453303550");
+        paciente.setCpf("04445303550");
         paciente.setContatos(Collections.singletonList("92685988"));
         paciente.setGenero("Masculino");
 
@@ -217,7 +220,7 @@ public class PacienteControllerTest {
         paciente.setNome("Antonio Vitor");
         paciente.setSobrenome("Guimaraes");
         paciente.setDataDeNascimento(LocalDate.of(2000, 9, 9));
-        paciente.setCpf("044453303550");
+        paciente.setCpf("04445303550");
         paciente.setContatos(Collections.singletonList("92685988"));
         paciente.setGenero("Masculino");
 
@@ -236,13 +239,15 @@ public class PacienteControllerTest {
         doNothing().when(pacienteService).inserir(any(Paciente.class));
 
         ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.configure(SerializationFeature.INDENT_OUTPUT, false);
         String pacienteJson = objectMapper.writeValueAsString(paciente);
 
         //Act & Assert
         mockMvc.perform(MockMvcRequestBuilders.post("/pacientes")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(pacienteJson))
-                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.status().isCreated())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(paciente.getId()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.nome").value(paciente.getNome()))
@@ -263,4 +268,121 @@ public class PacienteControllerTest {
         verify(pacienteService, times(1)).inserir(any(Paciente.class));
 
     }
+    @Test
+    @DisplayName("Deve altera as informações de um paciente já existente no banco de dados. ")
+    public void testeAlterarInformacaoPaciente() throws Exception {
+
+        //Arrange
+        Paciente paciente = new Paciente();
+        paciente.setId("12345");
+        paciente.setNome("Antonio Vitor");
+        paciente.setSobrenome("Guimaraes");
+        paciente.setDataDeNascimento(LocalDate.of(2000, 9, 9));
+        paciente.setCpf("04445303550");
+        paciente.setContatos(Collections.singletonList("92685988"));
+        paciente.setGenero("Masculino");
+
+        Endereco endereco = new Endereco();
+        endereco.setLogradouro("Vila Alto de Amaralina");
+        endereco.setCep("41905586");
+        endereco.setNumero(10);
+        endereco.setBairro( "Nordeste");
+        endereco.setMunicipio("Salvador");
+        endereco.setEstado("BA");
+
+        paciente.setEnderecos(Collections.singletonList(endereco));
+
+
+        //Mock
+        doNothing().when(pacienteService).inserir(any(Paciente.class));
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.configure(SerializationFeature.INDENT_OUTPUT, false);
+        String pacienteJson = objectMapper.writeValueAsString(paciente);
+
+        //Act & Assert
+        mockMvc.perform(MockMvcRequestBuilders.post("/pacientes")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(pacienteJson))
+                .andExpect(MockMvcResultMatchers.status().isCreated());
+
+        Paciente pacienteAtualizado = new Paciente();
+        pacienteAtualizado = paciente;
+        pacienteAtualizado.setNome("Victor");
+
+        String updatedPacienteJson = objectMapper.writeValueAsString(pacienteAtualizado);
+
+        //Mock
+        when(pacienteService.atualizar(eq(pacienteAtualizado.getId()), any(Paciente.class))).thenReturn(pacienteAtualizado);
+
+        //Act & Assert
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/pacientes/" + pacienteAtualizado.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(pacienteJson))
+                        .andExpect(MockMvcResultMatchers.status().isOk())
+                        .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(pacienteAtualizado.getId()))
+                        .andExpect(MockMvcResultMatchers.jsonPath("$.nome").value(pacienteAtualizado.getNome()));
+
+        //Verify
+        verify(pacienteService, times(1)).atualizar(eq(pacienteAtualizado.getId()), any(Paciente.class));
+
+    }
+
+    @Test
+    @DisplayName("Deve deletar um paciente existente do banco de dados. ")
+    public void testeDeletarUmPaciente() throws Exception {
+
+        //Arrange
+        Paciente paciente = new Paciente();
+        paciente.setId("12345");
+        paciente.setNome("Antonio Vitor");
+        paciente.setSobrenome("Guimaraes");
+        paciente.setDataDeNascimento(LocalDate.of(2000, 9, 9));
+        paciente.setCpf("04445303550");
+        paciente.setContatos(Collections.singletonList("92685988"));
+        paciente.setGenero("Masculino");
+
+        Endereco endereco = new Endereco();
+        endereco.setLogradouro("Vila Alto de Amaralina");
+        endereco.setCep("41905586");
+        endereco.setNumero(10);
+        endereco.setBairro( "Nordeste");
+        endereco.setMunicipio("Salvador");
+        endereco.setEstado("BA");
+
+        paciente.setEnderecos(Collections.singletonList(endereco));
+
+
+        //Mock
+        doNothing().when(pacienteService).inserir(any(Paciente.class));
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.configure(SerializationFeature.INDENT_OUTPUT, false);
+        String pacienteJson = objectMapper.writeValueAsString(paciente);
+
+        //Act & Assert
+        mockMvc.perform(MockMvcRequestBuilders.post("/pacientes")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(pacienteJson))
+                .andExpect(MockMvcResultMatchers.status().isCreated());
+
+        //Mock
+        when(pacienteService.encontrarPaciente(eq(paciente.getId()))).thenReturn(paciente);
+
+        //Act & Assert
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/pacientes/" + paciente.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(pacienteJson))
+                .andExpect(MockMvcResultMatchers.status().isNoContent());
+        //Verify
+        verify(pacienteService, times(1)).deletar(eq(paciente.getId()));
+
+    }
+
+
 }
