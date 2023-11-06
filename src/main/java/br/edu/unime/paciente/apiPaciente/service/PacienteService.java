@@ -58,7 +58,7 @@ public class PacienteService {
         Optional<Paciente> pacienteOptional = pacienteRepository.findById(id);
 
         if (pacienteOptional.isEmpty()) {
-            throw new Exception("Paciente não encontrado!");
+            throw new Exception("Paciente não encontrado.");
         }
         return pacienteOptional.get();
     }

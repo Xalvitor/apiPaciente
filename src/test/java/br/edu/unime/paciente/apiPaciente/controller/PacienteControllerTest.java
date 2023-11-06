@@ -6,10 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.apache.velocity.exception.ResourceNotFoundException;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,20 +16,18 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import br.edu.unime.paciente.apiPaciente.service.PacienteService;
-import org.springframework.test.web.servlet.MockMvcResultMatchersDsl;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 
-import java.lang.reflect.Array;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.regex.Matcher;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
@@ -108,7 +104,6 @@ public class PacienteControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].enderecos[0].bairro").value(paciente.getEnderecos().get(0).getBairro()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].enderecos[0].cep").value(paciente.getEnderecos().get(0).getCep()));
 
-
         //Verify
         verify(pacienteService, times(2)).obterTodos();
 
@@ -122,7 +117,6 @@ public class PacienteControllerTest {
 
         List<Paciente> pacientes = new ArrayList<>();
 
-
         //Mock
         when(pacienteService.obterTodos()).thenReturn(pacientes);
 
@@ -131,7 +125,6 @@ public class PacienteControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.length()").value(0));
-
 
         //Verify
         verify(pacienteService, times(2)).obterTodos();
@@ -184,7 +177,6 @@ public class PacienteControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.enderecos[0].bairro").value(paciente.getEnderecos().get(0).getBairro()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.enderecos[0].cep").value(paciente.getEnderecos().get(0).getCep()));
 
-
         //Verify
         verify(pacienteService, times(1)).encontrarPaciente(paciente.getId());
 
@@ -210,9 +202,8 @@ public class PacienteControllerTest {
     }
 
     @Test
-    @DisplayName("Deve adicionar um paciente no banco de dados. ")
+    @DisplayName("Deve ser possivel adicionar um paciente no banco de dados. ")
     public void testeAdicionarPacienteAoBancoDeDados() throws Exception {
-
 
         //Arrange
         Paciente paciente = new Paciente();
@@ -233,7 +224,6 @@ public class PacienteControllerTest {
         endereco.setEstado("BA");
 
         paciente.setEnderecos(Collections.singletonList(endereco));
-
 
         //Mock
         doNothing().when(pacienteService).inserir(any(Paciente.class));
@@ -263,13 +253,47 @@ public class PacienteControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.enderecos[0].bairro").value(paciente.getEnderecos().get(0).getBairro()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.enderecos[0].cep").value(paciente.getEnderecos().get(0).getCep()));
 
-
         //Verify
         verify(pacienteService, times(1)).inserir(any(Paciente.class));
 
     }
     @Test
-    @DisplayName("Deve altera as informações de um paciente já existente no banco de dados. ")
+    @DisplayName("Deve ser retornar erro quando tenta cadastrar no banco de dados sem todos os dados. ")
+    public void testeAdicionarPacienteAoBancoDeDadosComDadosIncompletos() throws Exception {
+
+
+        //Arrange
+        Paciente paciente = new Paciente();
+
+        //Mock
+        doNothing().when(pacienteService).inserir(any(Paciente.class));
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.configure(SerializationFeature.INDENT_OUTPUT, false);
+        String pacienteJson = objectMapper.writeValueAsString(paciente);
+
+        //Act & Assert
+        mockMvc.perform(MockMvcRequestBuilders.post("/pacientes")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(pacienteJson))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.[*]").value(
+                        containsInAnyOrder(
+                                "Nome não pode estar em branco.",
+                                "Contatos não pode estar em branco.",
+                                "Genero não pode estar em branco.",
+                                "Enderecos não pode estar em branco.",
+                                "Data não pode estar em branco.",
+                                "Sobrenome não pode estar em branco.",
+                                "CPF não pode estar em branco."
+                        )
+                ));
+
+    }
+    @Test
+    @DisplayName("Deve alterar as informações de um paciente já existente no banco de dados. ")
     public void testeAlterarInformacaoPaciente() throws Exception {
 
         //Arrange
@@ -330,7 +354,91 @@ public class PacienteControllerTest {
         verify(pacienteService, times(1)).atualizar(eq(pacienteAtualizado.getId()), any(Paciente.class));
 
     }
+    @Test
+    @DisplayName("Deve ser retornar erro quando tenta alterar um paciente utilizando um id que não consta no banco de dados.")
+    public void testeAlterarInformacaoComIdInvalido() throws Exception {
+        //Arrange
+        String id = "12312321131311";
 
+        //Mock
+        when(pacienteService.atualizar(id, null)).thenThrow(ResourceNotFoundException.class);
+
+        //Act & Assert
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/pacientes/" + id)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andExpect(MockMvcResultMatchers.content().string((containsString("O paciente não foi encontrado"))));
+
+    }
+    @Test
+    @DisplayName("Deve ser retornar erro quando tenta alterar um paciente no banco de dados com informação em branco. ")
+    public void testeTentarAlterarPacienteComInformacoesEmBranco() throws Exception {
+
+        //Arrange
+        Paciente paciente = new Paciente();
+        paciente.setId("12345");
+        paciente.setNome("Antonio Vitor");
+        paciente.setSobrenome("Guimaraes");
+        paciente.setDataDeNascimento(LocalDate.of(2000, 9, 9));
+        paciente.setCpf("04445303550");
+        paciente.setContatos(Collections.singletonList("92685988"));
+        paciente.setGenero("Masculino");
+
+        Endereco endereco = new Endereco();
+        endereco.setLogradouro("Vila Alto de Amaralina");
+        endereco.setCep("41905586");
+        endereco.setNumero(10);
+        endereco.setBairro( "Nordeste");
+        endereco.setMunicipio("Salvador");
+        endereco.setEstado("BA");
+
+        paciente.setEnderecos(Collections.singletonList(endereco));
+
+        //Mock
+        doNothing().when(pacienteService).inserir(any(Paciente.class));
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.configure(SerializationFeature.INDENT_OUTPUT, false);
+        String pacienteJson = objectMapper.writeValueAsString(paciente);
+
+        //Act & Assert
+        mockMvc.perform(MockMvcRequestBuilders.post("/pacientes")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(pacienteJson))
+                .andExpect(MockMvcResultMatchers.status().isCreated())
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
+
+        //Arrange
+
+        Paciente pacienteAtualizado = new Paciente();
+
+        //Mock
+        when(pacienteService.atualizar(eq(pacienteAtualizado.getId()), any(Paciente.class))).thenReturn(pacienteAtualizado);
+
+        String updatedPacienteJson = objectMapper.writeValueAsString(pacienteAtualizado);
+
+        //Act & Assert
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/pacientes/" + paciente.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(updatedPacienteJson))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.[*]").value(
+                containsInAnyOrder(
+                        "Nome não pode estar em branco.",
+                        "Contatos não pode estar em branco.",
+                        "Genero não pode estar em branco.",
+                        "Enderecos não pode estar em branco.",
+                        "Data não pode estar em branco.",
+                        "Sobrenome não pode estar em branco.",
+                        "CPF não pode estar em branco."
+                )
+        ));
+
+    }
     @Test
     @DisplayName("Deve deletar um paciente existente do banco de dados. ")
     public void testeDeletarUmPaciente() throws Exception {
@@ -371,18 +479,31 @@ public class PacienteControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isCreated());
 
         //Mock
-        when(pacienteService.encontrarPaciente(eq(paciente.getId()))).thenReturn(paciente);
+        doNothing().when(pacienteService).deletar(eq(paciente.getId()));
 
         //Act & Assert
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/pacientes/" + paciente.getId())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(pacienteJson))
-                .andExpect(MockMvcResultMatchers.status().isNoContent());
+                        .contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(MockMvcResultMatchers.status().isNoContent());
         //Verify
         verify(pacienteService, times(1)).deletar(eq(paciente.getId()));
 
     }
+    @Test
+    @DisplayName("Deve retornar erro ao tentar deletar um paciente utilizando um ID que não consta no banco de dados. ")
+    public void testeErroAoTentarDeletarPacienteComIdInvalido() throws Exception {
 
+        //Arrange
+        String id = "12312321131311";
+
+        //Mock
+        doThrow(new ResourceNotFoundException("Paciente não encontrado")).when(pacienteService).deletar(id);
+
+        //Act & Assert
+        mockMvc.perform(MockMvcRequestBuilders.delete("/pacientes/" + id)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+    }
 
 }
