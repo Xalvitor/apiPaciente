@@ -506,4 +506,17 @@ public class PacienteControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
+    @Test
+    @DisplayName("Deve retornar erro ao de not found caso tente acessar um endereço invalido ")
+    public void testeErroAoTentarAcessarLocalInvalido() throws Exception {
+
+
+        //Mock
+        doThrow(new ResourceNotFoundException("Endereço não encontrado")).when(pacienteService).encontrarPaciente(anyString());
+
+        //Act & Assert
+        mockMvc.perform(MockMvcRequestBuilders.get("/pacientez")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+    }
 }
