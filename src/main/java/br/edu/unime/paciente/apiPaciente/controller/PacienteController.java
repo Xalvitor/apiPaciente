@@ -29,7 +29,7 @@
         @GetMapping
         public ResponseEntity<List<Paciente>> obterTodos() {
             int statusCode = HttpServletResponse.SC_OK;
-            pacienteService.registrarLog("GET", "Buscar Paciente pelo id", pacienteService.obterTodos().toString(), statusCode);
+            pacienteService.registrarLog("GET", "Buscar Pacientes", pacienteService.obterTodos().toString(), statusCode);
             return ResponseEntity.ok().body(pacienteService.obterTodos());
         }
 
@@ -100,13 +100,13 @@
                 Paciente pacienteAtualizado = pacienteService.atualizar(id, paciente);
                 if (pacienteAtualizado != null) {
                     int statusCode = HttpServletResponse.SC_OK;
-                    pacienteService.registrarLog("PUT", "Atualizar cadastro do Paciente", paciente + " pelo id: " + id, statusCode);
+                    pacienteService.registrarLog("PUT", "Atualizar cadastro do Paciente", "Erro ao adicionar o paciente: " + paciente + " pelo id: " + id, statusCode);
 
                     return ResponseEntity.ok().body(pacienteAtualizado);
                 } else {
                     String mensagemDeErro = "Paciente com ID " + id + " não encontrado.";
                     int statusCode = HttpServletResponse.SC_NOT_FOUND;
-                    pacienteService.registrarLog("PUT", "Atualizar cadastro do Paciente", "Paciente não foi encontrado pelo id" + paciente + " pelo id: " + id, statusCode);
+                    pacienteService.registrarLog("PUT", "Atualizar cadastro do Paciente", "Paciente não foi encontrado pelo id " + paciente + " pelo id: " + id, statusCode);
 
                     Map<String, String> resposta = new HashMap<>();
                     resposta.put("mensagem", mensagemDeErro);
@@ -118,7 +118,7 @@
 
                 resposta.put("mensagem", e.getMessage());
                 int statusCode = HttpServletResponse.SC_NOT_FOUND;
-                pacienteService.registrarLog("PUT", "Atualizar cadastro do Paciente", "Erro ao atualizar Paciente" + paciente + " pelo id: " + id, statusCode);
+                pacienteService.registrarLog("PUT", "Atualizar cadastro do Paciente", "Erro ao atualizar o paciente " + paciente + " pelo id: " + id, statusCode);
 
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(resposta);
             }
@@ -149,7 +149,7 @@
                 resposta.put("mensagem", e.getMessage());
 
                 int statusCode = HttpServletResponse.SC_NOT_FOUND;
-                pacienteService.registrarLog("DELETE", "Deletar Paciente por id", "Id do Paciente" + id, statusCode);
+                pacienteService.registrarLog("DELETE", "Deletar Paciente por id", "Id do Paciente " + id, statusCode);
 
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(resposta);
             }
@@ -180,7 +180,7 @@
                 resposta.put("mensagem", e.getMessage());
 
                 int statusCode = HttpServletResponse.SC_BAD_REQUEST;
-                pacienteService.registrarLog("POST", "Adicionar pacientes predefinidos",
+                pacienteService.registrarLog("POST", "Adicionar pacientes predefinidos " ,
                         "Erro ao tentar adicionar pacientes predefinidos", statusCode);
 
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resposta);
