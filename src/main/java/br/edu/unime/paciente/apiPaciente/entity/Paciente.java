@@ -1,5 +1,6 @@
 package br.edu.unime.paciente.apiPaciente.entity;
 
+import br.edu.unime.paciente.apiPaciente.validation.CPFunico;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,28 +19,29 @@ public class Paciente {
 
     @Id
     private String id;
-    @NotBlank(message = "Nome não pode estar em branco.")
-    @Size(min = 2, max = 100, message = "O nome deve ter entre 2 a 100 digitos")
+    @NotBlank(message = "Nome não pode ser nulo e não pode estar em branco.")
+    @Size(min = 2, max = 100, message = "O nome deve ter entre 2 a 100 digitos.")
     private String nome;
 
-    @Size(min = 2, max = 100, message = "O sobrenome deve ter entre 2 a 100 digitos")
-    @NotBlank(message = "Sobrenome não pode estar em branco.")
+    @Size(min = 2, max = 100, message = "O sobrenome deve ter entre 2 a 100 digitos.")
+    @NotBlank(message = "Sobrenome não ser nulo e não pode estar em branco.")
     private String sobrenome;
 
     @CPF
-    @NotBlank(message = "CPF não pode estar em branco.")
+    @NotBlank(message = "CPF não pode ser nulo e não pode estar em branco.")
+    @CPFunico
     private String cpf;
 
-    @NotNull(message = "Data não pode estar em branco.")
+    @NotNull(message = "Data não pode ser nulo e não pode estar em branco.")
     private LocalDate dataDeNascimento;
-    @NotBlank(message = "Genero não pode estar em branco.")
+    @NotBlank(message = "Genero não pode ser nulo e não pode estar em branco.")
     private String genero;
 
-    @NotEmpty(message = "Contatos não pode estar em branco.")
+    @NotEmpty(message = "Contatos não pode ser nulo e não pode estar em branco.")
     private List<String> contatos;
 
     @Valid
-    @NotEmpty(message = "Enderecos não pode estar em branco.")
+    @NotEmpty(message = "Enderecos não pode ser nulo e não pode estar em branco.")
     private List<Endereco> enderecos;
 
     public String getId() {

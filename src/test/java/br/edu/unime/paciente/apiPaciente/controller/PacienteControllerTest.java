@@ -2,6 +2,7 @@ package br.edu.unime.paciente.apiPaciente.controller;
 
 import br.edu.unime.paciente.apiPaciente.entity.Endereco;
 import br.edu.unime.paciente.apiPaciente.entity.Paciente;
+import br.edu.unime.paciente.apiPaciente.validation.CPFunicoValidador;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -20,6 +21,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,6 +42,9 @@ public class PacienteControllerTest {
     @MockBean
     PacienteService pacienteService;
 
+    @MockBean
+    CPFunicoValidador cpfUnicoValidador;
+
     @Test
     @DisplayName("Deve ser possivél obter todos os pacientes cadastrados")
     public void testeDeObterTodosPacientes() throws Exception {
@@ -49,7 +54,7 @@ public class PacienteControllerTest {
         paciente.setNome("Antonio Vitor");
         paciente.setSobrenome("Guimaraes");
         paciente.setDataDeNascimento(LocalDate.of(2000, 9, 9));
-        paciente.setCpf("04445303550");
+        paciente.setCpf("46602318012");
         paciente.setContatos(Collections.singletonList("92685988"));
         paciente.setGenero("Masculino");
 
@@ -67,7 +72,7 @@ public class PacienteControllerTest {
         paciente2.setNome("Carol");
         paciente2.setSobrenome("Guimaraes");
         paciente2.setDataDeNascimento(LocalDate.of(1999, 4, 12));
-        paciente2.setCpf("68988363078");
+        paciente2.setCpf("20785019057");
         paciente2.setContatos(Collections.singletonList("23372466"));
         paciente2.setGenero("Feminino");
 
@@ -140,7 +145,7 @@ public class PacienteControllerTest {
         paciente.setNome("Antonio Vitor");
         paciente.setSobrenome("Guimaraes");
         paciente.setDataDeNascimento(LocalDate.of(2000, 9, 9));
-        paciente.setCpf("04445303550");
+        paciente.setCpf("02691076067");
         paciente.setContatos(Collections.singletonList("92685988"));
         paciente.setGenero("Masculino");
 
@@ -211,7 +216,7 @@ public class PacienteControllerTest {
         paciente.setNome("Antonio Vitor");
         paciente.setSobrenome("Guimaraes");
         paciente.setDataDeNascimento(LocalDate.of(2000, 9, 9));
-        paciente.setCpf("04445303550");
+        paciente.setCpf("94639685041");
         paciente.setContatos(Collections.singletonList("92685988"));
         paciente.setGenero("Masculino");
 
@@ -228,12 +233,16 @@ public class PacienteControllerTest {
         //Mock
         doNothing().when(pacienteService).inserir(any(Paciente.class));
 
+        HttpServletRequest mockRequest = mock(HttpServletRequest.class);
+        when(mockRequest.getMethod()).thenReturn("POST");
+
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.configure(SerializationFeature.INDENT_OUTPUT, false);
         String pacienteJson = objectMapper.writeValueAsString(paciente);
 
         //Act & Assert
+
         mockMvc.perform(MockMvcRequestBuilders.post("/pacientes")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(pacienteJson))
@@ -256,14 +265,24 @@ public class PacienteControllerTest {
         //Verify
         verify(pacienteService, times(1)).inserir(any(Paciente.class));
 
+
     }
     @Test
-    @DisplayName("Deve ser retornar erro quando tenta cadastrar no banco de dados sem todos os dados. ")
+    @DisplayName("Deve ser retornar erro quando tenta cadastrar no banco de dados com endereco em branco. ")
     public void testeAdicionarPacienteAoBancoDeDadosComDadosIncompletos() throws Exception {
 
-
         //Arrange
+
         Paciente paciente = new Paciente();
+        paciente.setId("12345");
+        paciente.setNome("Antonio Vitor");
+        paciente.setSobrenome("Guimaraes");
+        paciente.setDataDeNascimento(LocalDate.of(2000, 9, 9));
+        paciente.setCpf("33203242095");
+        paciente.setContatos(Collections.singletonList("92685988"));
+        paciente.setGenero("Masculino");
+
+
 
         //Mock
         doNothing().when(pacienteService).inserir(any(Paciente.class));
@@ -279,17 +298,7 @@ public class PacienteControllerTest {
                         .content(pacienteJson))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.[*]").value(
-                        containsInAnyOrder(
-                                "Nome não pode estar em branco.",
-                                "Contatos não pode estar em branco.",
-                                "Genero não pode estar em branco.",
-                                "Enderecos não pode estar em branco.",
-                                "Data não pode estar em branco.",
-                                "Sobrenome não pode estar em branco.",
-                                "CPF não pode estar em branco."
-                        )
-                ));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.mensagem").value("Enderecos não pode ser nulo e não pode estar em branco."));
 
     }
     @Test
@@ -302,7 +311,7 @@ public class PacienteControllerTest {
         paciente.setNome("Antonio Vitor");
         paciente.setSobrenome("Guimaraes");
         paciente.setDataDeNascimento(LocalDate.of(2000, 9, 9));
-        paciente.setCpf("04445303550");
+        paciente.setCpf("60204364035");
         paciente.setContatos(Collections.singletonList("92685988"));
         paciente.setGenero("Masculino");
 
@@ -373,7 +382,7 @@ public class PacienteControllerTest {
     }
     @Test
     @DisplayName("Deve ser retornar erro quando tenta alterar um paciente no banco de dados com informação em branco. ")
-    public void testeTentarAlterarPacienteComInformacoesEmBranco() throws Exception {
+    public void testeTentarAlterarPacienteComInformacaoEmBranco() throws Exception {
 
         //Arrange
         Paciente paciente = new Paciente();
@@ -381,7 +390,7 @@ public class PacienteControllerTest {
         paciente.setNome("Antonio Vitor");
         paciente.setSobrenome("Guimaraes");
         paciente.setDataDeNascimento(LocalDate.of(2000, 9, 9));
-        paciente.setCpf("04445303550");
+        paciente.setCpf("00075973049");
         paciente.setContatos(Collections.singletonList("92685988"));
         paciente.setGenero("Masculino");
 
@@ -413,6 +422,13 @@ public class PacienteControllerTest {
         //Arrange
 
         Paciente pacienteAtualizado = new Paciente();
+        pacienteAtualizado.setId("12345");
+        pacienteAtualizado.setNome("Antonio Vitor");
+        pacienteAtualizado.setSobrenome("Guimaraes");
+        pacienteAtualizado.setDataDeNascimento(LocalDate.of(2000, 9, 9));
+        pacienteAtualizado.setCpf("00075973049");
+        pacienteAtualizado.setContatos(Collections.singletonList("92685988"));
+        pacienteAtualizado.setGenero("Masculino");
 
         //Mock
         when(pacienteService.atualizar(eq(pacienteAtualizado.getId()), any(Paciente.class))).thenReturn(pacienteAtualizado);
@@ -426,17 +442,7 @@ public class PacienteControllerTest {
                         .content(updatedPacienteJson))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.[*]").value(
-                containsInAnyOrder(
-                        "Nome não pode estar em branco.",
-                        "Contatos não pode estar em branco.",
-                        "Genero não pode estar em branco.",
-                        "Enderecos não pode estar em branco.",
-                        "Data não pode estar em branco.",
-                        "Sobrenome não pode estar em branco.",
-                        "CPF não pode estar em branco."
-                )
-        ));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.mensagem").value("Enderecos não pode ser nulo e não pode estar em branco."));
 
     }
     @Test
@@ -449,7 +455,7 @@ public class PacienteControllerTest {
         paciente.setNome("Antonio Vitor");
         paciente.setSobrenome("Guimaraes");
         paciente.setDataDeNascimento(LocalDate.of(2000, 9, 9));
-        paciente.setCpf("04445303550");
+        paciente.setCpf("29229920045");
         paciente.setContatos(Collections.singletonList("92685988"));
         paciente.setGenero("Masculino");
 

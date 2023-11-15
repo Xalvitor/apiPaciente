@@ -9,5 +9,7 @@ import java.util.Optional;
 @Repository
 public interface PacienteRepository extends MongoRepository<Paciente, String> {
 
+     boolean existsByCpf(String cpf);
+
     Optional<Paciente> findById(String id);
 }
