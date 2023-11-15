@@ -1,6 +1,6 @@
 # API de paciente
 
-Este é um projeto de API desenvolvido em Spring Boot para gerenciamento de informações sobre vacinas.
+Este é um projeto de API desenvolvido em Spring Boot para gerenciamento de pacientes.
 
 ## Pré-requisitos
 
@@ -16,7 +16,7 @@ Certifique-se de ter as seguintes ferramentas instaladas em sua máquina:
 ### MongoDB
 
 1. Instale o MongoDB Compass seguindo as instruções [aqui](https://docs.mongodb.com/compass/current/install/).
-2. Abra o MongoDB Compass e crie um banco de dados chamado `vacina-api`.
+2. Abra o MongoDB Compass e crie um banco de dados chamado `pacientes-api`.
 
 ### IntelliJ IDEA
 
@@ -33,7 +33,7 @@ Certifique-se de ter as seguintes ferramentas instaladas em sua máquina:
 1. Clone o projeto:
 
 ```bash
-git clone https://github.com/Noobplayerv12/apiVacina.git
+git clone https://github.com/Xalvitor/apiPaciente/edit/main/README.md
 ```
 
 2. Abra o projeto no IntelliJ IDEA.
@@ -42,7 +42,7 @@ git clone https://github.com/Noobplayerv12/apiVacina.git
 ```properties
 spring.data.mongodb.host=localhost
 spring.data.mongodb.port=27017
-spring.data.mongodb.database=vacina-api
+spring.data.mongodb.database=pacientes-api
 server.port=8081
 ```
 
