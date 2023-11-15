@@ -65,8 +65,10 @@ public class PacienteService {
 
     @CachePut("pacienteCache")
     public void inserir(Paciente paciente){
+
         pacienteRepository.insert(paciente);
     }
+
     @CachePut(value = "pacienteCache", key = "#id")
     public Paciente atualizar(String id, Paciente paciente) throws Exception {
         Paciente pacienteAntigo = encontrarPaciente(id);

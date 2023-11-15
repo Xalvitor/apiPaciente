@@ -151,6 +151,7 @@
                     resposta.put("mensagem", mensagemDeErro);
                     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(resposta);
                 }
+
                 pacienteService.deletar(id);
 
                 int statusCode = HttpServletResponse.SC_NO_CONTENT;

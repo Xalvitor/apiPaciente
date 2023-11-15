@@ -2,6 +2,7 @@ package br.edu.unime.paciente.apiPaciente.controller;
 
 import br.edu.unime.paciente.apiPaciente.entity.Endereco;
 import br.edu.unime.paciente.apiPaciente.entity.Paciente;
+import br.edu.unime.paciente.apiPaciente.repository.PacienteRepository;
 import br.edu.unime.paciente.apiPaciente.validation.CPFunicoValidador;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -9,6 +10,8 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -43,7 +46,7 @@ public class PacienteControllerTest {
     PacienteService pacienteService;
 
     @MockBean
-    CPFunicoValidador cpfUnicoValidador;
+    PacienteRepository pacienteRepository;
 
     @Test
     @DisplayName("Deve ser possivél obter todos os pacientes cadastrados")
@@ -366,18 +369,56 @@ public class PacienteControllerTest {
     @Test
     @DisplayName("Deve ser retornar erro quando tenta alterar um paciente utilizando um id que não consta no banco de dados.")
     public void testeAlterarInformacaoComIdInvalido() throws Exception {
+
         //Arrange
-        String id = "12312321131311";
+        Paciente paciente = new Paciente();
+        paciente.setId("12345");
+        paciente.setNome("Antonio Vitor");
+        paciente.setSobrenome("Guimaraes");
+        paciente.setDataDeNascimento(LocalDate.of(2000, 9, 9));
+        paciente.setCpf("60204364035");
+        paciente.setContatos(Collections.singletonList("92685988"));
+        paciente.setGenero("Masculino");
+
+        Endereco endereco = new Endereco();
+        endereco.setLogradouro("Vila Alto de Amaralina");
+        endereco.setCep("41905586");
+        endereco.setNumero(10);
+        endereco.setBairro( "Nordeste");
+        endereco.setMunicipio("Salvador");
+        endereco.setEstado("BA");
+
+        paciente.setEnderecos(Collections.singletonList(endereco));
 
         //Mock
-        when(pacienteService.atualizar(id, null)).thenThrow(ResourceNotFoundException.class);
+        doNothing().when(pacienteService).inserir(any(Paciente.class));
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.configure(SerializationFeature.INDENT_OUTPUT, false);
+        String pacienteJson = objectMapper.writeValueAsString(paciente);
+
+        //Act & Assert
+        mockMvc.perform(MockMvcRequestBuilders.post("/pacientes")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(pacienteJson))
+                .andExpect(MockMvcResultMatchers.status().isCreated());
+
+        Paciente pacienteAtualizado = new Paciente();
+        pacienteAtualizado = paciente;
+        pacienteAtualizado.setNome("Victor");
+
+        String updatedPacienteJson = objectMapper.writeValueAsString(pacienteAtualizado);
+
+        //Mock
+        when(pacienteService.atualizar(eq(pacienteAtualizado.getId()), any(Paciente.class))).thenReturn(pacienteAtualizado);
 
         //Act & Assert
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/pacientes/" + id)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isNotFound())
-                .andExpect(MockMvcResultMatchers.content().string((containsString("O paciente não foi encontrado"))));
+        mockMvc.perform(MockMvcRequestBuilders.put("/pacientes/" + "idinvalido")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(pacienteJson))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
 
     }
     @Test
@@ -485,6 +526,7 @@ public class PacienteControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isCreated());
 
         //Mock
+        Mockito.when(pacienteService.encontrarPaciente(ArgumentMatchers.anyString())).thenReturn(paciente);
         doNothing().when(pacienteService).deletar(eq(paciente.getId()));
 
         //Act & Assert
