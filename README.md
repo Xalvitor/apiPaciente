@@ -91,7 +91,7 @@ Acesse os seguintes endpoints da API:
     "enderecos": [
         {
           "logradouro": "Precisa colocar o logradouro",
-          "numero": {precisa ter apenas um número acima de 0},
+          "numero": "precisa ter apenas um número acima de 0",
           "bairro": "Precisa colocar o logradouro",
           "cep": "precisa colocar cep de pelo menos 8 digitos",
           "municipio": "Precisa colocar o nome do municipio",
