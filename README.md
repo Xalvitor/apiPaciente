@@ -1,4 +1,4 @@
-# API de Vacina
+# API de paciente
 
 Este é um projeto de API desenvolvido em Spring Boot para gerenciamento de informações sobre vacinas.
 
