@@ -106,4 +106,4 @@ Acesse os seguintes endpoints da API:
 
 - ## Licença MIT
 
-Este projeto é licenciado sob a Licença MIT - veja o arquivo [LICENSE](LICENSE) para detalhes.
+Este projeto é licenciado sob a Licença MIT - veja o arquivo [LICENSE](LICENSE.txt) para detalhes.
