@@ -33,7 +33,7 @@ Certifique-se de ter as seguintes ferramentas instaladas em sua máquina:
 1. Clone o projeto:
 
 ```bash
-git clone https://github.com/Xalvitor/apiPaciente/edit/main/README.md
+git clone https://github.com/Xalvitor/apiPaciente.git
 ```
 
 2. Abra o projeto no IntelliJ IDEA.
