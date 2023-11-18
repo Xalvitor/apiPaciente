@@ -43,7 +43,7 @@ git clone https://github.com/Xalvitor/apiPaciente.git
 spring.data.mongodb.host=localhost
 spring.data.mongodb.port=27017
 spring.data.mongodb.database=pacientes-api
-server.port=8081
+server.port=8082
 ```
 
 4. Execute o aplicativo a partir do IntelliJ IDEA.
