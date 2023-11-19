@@ -8,14 +8,14 @@ Certifique-se de ter as seguintes ferramentas instaladas em sua máquina:
 
 - [Java Development Kit (JDK) 17 ou superior](https://www.oracle.com/java/technologies/javase-downloads.html)
 - [IntelliJ IDEA](https://www.jetbrains.com/idea/download/)
-- [MongoDB Comunnity Server](https://www.mongodb.com/try/download/community)
+- [MongoDB Community Server](https://www.mongodb.com/try/download/community)
 - [Postman](https://www.postman.com/downloads/)
 
 ## Configuração do Ambiente
 
 ### MongoDB
 
-1. Instale o MongoDB Comunnity Server [aqui]([https://www.mongodb.com/try/download/community]).
+1. Instale o MongoDB Comunnity Server [aqui](https://www.mongodb.com/try/download/community).
 2. Certifique-se que MongoDB está com URI: mongodb://localhost:27017
 3. Abra o MongoDB Compass e crie um banco de dados chamado `pacientes-api`.
 
