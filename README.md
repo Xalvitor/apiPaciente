@@ -77,7 +77,7 @@ Acesse os seguintes endpoints da API:
         }
      ]
   }
-
+```
 - `PUT http://localhost:8082/pacientes/{id do paciente}`: Altera as informações do paciente com base no ID. Utilize um JSON no corpo da requisição conforme o modelo da entidade `Paciente`.
 
   Exemplo de JSON:
@@ -100,7 +100,7 @@ Acesse os seguintes endpoints da API:
         }
      ]
   }
-
+```
 - `DELETE http://localhost:8082/pacientes/{id do paciente}`: Deleta o paciente com o id inserido do banco de dados
 - `POST http://localhost:8082/pacientes/adicionar-pacientes`: Adiciona pacientes pre-definidos ao banco de dados a fim de testes
 
