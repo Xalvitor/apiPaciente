@@ -57,48 +57,44 @@ Acesse os seguintes endpoints da API:
 - `POST http://localhost:8082/pacientes`: Adiciona um novo paciente ao banco de dados. Utilize um JSON no corpo da requisição conforme o modelo da entidade `Paciente`.
 
   Exemplo de JSON:
-  ```json
-  { 
-    "nome": "Precisa de nome com pelo menos 2 letras",
-    "sobrenome": "Precisa de sobrenome com pelo menos 2 letras",
-    "cpf": "Precisa de CPF valido",
-    "dataDeNascimento": "Precisa de data em formato xxxx-xx-xx",
-    "genero": "Precisa se dizer o genero",
-    "contatos": ["Precisa se colocar no minimo um contato"],
-    "enderecos": [
-        {
-          "logradouro": "Precisa colocar o logradouro",
-          "numero": {precisa ter apenas um número acima de 0},
-          "bairro": "Precisa colocar o logradouro",
-          "cep": "precisa colocar cep de pelo menos 8 digitos",
-          "municipio": "Precisa colocar o nome do municipio",
-          "estado": "Precisa colocar uma sigla de 2 letras"
-        }
-     ]
-  }
+  ```Exemplo json
+{
+    "nome": "Jackson",
+    "sobrenome": "Luis",
+    "cpf": "01386049085",
+    "genero": "Masculino",
+    "contatos": ["71986704512"],
+    "dataDeNascimento": 11042002,
+    "enderecos": [{
+                "estado": "BA",
+                "bairro": "itinga",
+                "cep": "42722150",
+                "numero":12,
+                "municipio": "Lauro de freitas",
+                "logradouro":"rua"
+            }]
+}
   ```
 
 - `PUT http://localhost:8082/pacientes/{id do paciente}`: Altera as informações do paciente com base no ID. Utilize um JSON no corpo da requisição conforme o modelo da entidade `Paciente`.
 
-  ```json
-  { 
-    "nome": "Precisa de nome com pelo menos 2 letras",
-    "sobrenome": "Precisa de sobrenome com pelo menos 2 letras",
-    "cpf": "Precisa de CPF valido",
-    "dataDeNascimento": "Precisa de data em formato xxxx-xx-xx",
-    "genero": "Precisa se dizer o genero",
-    "contatos": ["Precisa se colocar no minimo um contato"],
-    "enderecos": [
-        {
-          "logradouro": "Precisa colocar o logradouro",
-          "numero": {precisa ter apenas um número acima de 0},
-          "bairro": "Precisa colocar o logradouro",
-          "cep": "precisa colocar cep de pelo menos 8 digitos",
-          "municipio": "Precisa colocar o nome do municipio",
-          "estado": "Precisa colocar uma sigla de 2 letras"
-        }
-     ]
-  }
+  ```Exemplo json
+{
+    "nome": "Jackson",
+    "sobrenome": "Luis",
+    "cpf": "01386049085",
+    "genero": "Masculino",
+    "contatos": ["7192685988"],
+    "dataDeNascimento": 11042002,
+    "enderecos": [{
+                "estado": "BA",
+                "bairro": "itinga",
+                "cep": "42722150",
+                "numero":12,
+                "municipio": "Lauro de freitas",
+                "logradouro":"rua"
+            }]
+}
   ```
 
 - `DELETE http://localhost:8082/pacientes/{id do paciente}`: Deleta o paciente com o id inserido do banco de dados
