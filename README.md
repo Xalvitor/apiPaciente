@@ -57,45 +57,49 @@ Acesse os seguintes endpoints da API:
 - `POST http://localhost:8082/pacientes`: Adiciona um novo paciente ao banco de dados. Utilize um JSON no corpo da requisição conforme o modelo da entidade `Paciente`.
 
   Exemplo de JSON:
-  ```Exemplo json
-{
-    "nome": "Jackson",
-    "sobrenome": "Luis",
-    "cpf": "01386049085",
+
+  ```json
+  { 
+    "nome": "Antonio",
+    "sobrenome": "Vitor",
+    "cpf": "11784323004",
+    "dataDeNascimento": "2000-12-12",
     "genero": "Masculino",
-    "contatos": ["71986704512"],
-    "dataDeNascimento": 11042002,
-    "enderecos": [{
-                "estado": "BA",
-                "bairro": "itinga",
-                "cep": "42722150",
-                "numero":12,
-                "municipio": "Lauro de freitas",
-                "logradouro":"rua"
-            }]
-}
-  ```
+    "contatos": ["97974-4727"],
+    "enderecos": [
+        {
+          "logradouro": "Rua Itamar Neiva Monteiro",
+          "numero": 1,
+          "bairro": "José Américo de Almeida",
+          "cep": "58074000",
+          "municipio": "João Pessoa",
+          "estado": "PB"
+        }
+     ]
+  }
 
 - `PUT http://localhost:8082/pacientes/{id do paciente}`: Altera as informações do paciente com base no ID. Utilize um JSON no corpo da requisição conforme o modelo da entidade `Paciente`.
 
-  ```Exemplo json
-{
-    "nome": "Jackson",
-    "sobrenome": "Luis",
-    "cpf": "01386049085",
+  Exemplo de JSON:
+  ```json
+  { 
+    "nome": "Antonio",
+    "sobrenome": "Vitor",
+    "cpf": "11784323004",
+    "dataDeNascimento": "2000-12-12",
     "genero": "Masculino",
-    "contatos": ["7192685988"],
-    "dataDeNascimento": 11042002,
-    "enderecos": [{
-                "estado": "BA",
-                "bairro": "itinga",
-                "cep": "42722150",
-                "numero":12,
-                "municipio": "Lauro de freitas",
-                "logradouro":"rua"
-            }]
-}
-  ```
+    "contatos": ["97974-4727"],
+    "enderecos": [
+        {
+          "logradouro": "Rua Itamar Neiva Monteiro",
+          "numero": 1,
+          "bairro": "José Américo de Almeida",
+          "cep": "58074000",
+          "municipio": "João Pessoa",
+          "estado": "PB"
+        }
+     ]
+  }
 
 - `DELETE http://localhost:8082/pacientes/{id do paciente}`: Deleta o paciente com o id inserido do banco de dados
 - `POST http://localhost:8082/pacientes/adicionar-pacientes`: Adiciona pacientes pre-definidos ao banco de dados a fim de testes
