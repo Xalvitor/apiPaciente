@@ -15,7 +15,7 @@ Certifique-se de ter as seguintes ferramentas instaladas em sua máquina:
 
 ### MongoDB
 
-1. Instale o MongoDB Comunnity Server [aqui](https://www.mongodb.com/try/download/community).
+1. Instale o MongoDB Community Server [aqui](https://www.mongodb.com/try/download/community).(Pressione select package em Community Community Server, em seguida pressione download)
 2. Certifique-se que MongoDB está com URI: mongodb://localhost:27017
 3. Abra o MongoDB Compass e crie um banco de dados chamado `pacientes-api`.
 
