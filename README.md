@@ -8,7 +8,7 @@ Certifique-se de ter as seguintes ferramentas instaladas em sua máquina:
 
 - [Java Development Kit (JDK) 17 ou superior](https://www.oracle.com/java/technologies/javase-downloads.html)
 - [IntelliJ IDEA](https://www.jetbrains.com/idea/download/)
-- [MongoDB Comunnity Server](https://www.mongodb.com/try/download/community))
+- [MongoDB Comunnity Server](https://www.mongodb.com/try/download/community)
 - [Postman](https://www.postman.com/downloads/)
 
 ## Configuração do Ambiente
