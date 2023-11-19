@@ -77,7 +77,7 @@ Acesse os seguintes endpoints da API:
         }
      ]
   }
-```
+  ```
 - `PUT http://localhost:8082/pacientes/{id do paciente}`: Altera as informações do paciente com base no ID. Utilize um JSON no corpo da requisição conforme o modelo da entidade `Paciente`.
 
   Exemplo de JSON:
@@ -88,7 +88,7 @@ Acesse os seguintes endpoints da API:
     "cpf": "11784323004",
     "dataDeNascimento": "2000-12-12",
     "genero": "Masculino",
-    "contatos": ["97974-4727"],
+    "contatos": ["98849-7848"],
     "enderecos": [
         {
           "logradouro": "Rua Itamar Neiva Monteiro",
