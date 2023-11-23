@@ -17,7 +17,9 @@ public class DataNascimentoValidador implements ConstraintValidator<DataNascimen
         }
 
         LocalDate dataAtual =  LocalDate.now();
+
         LocalDate limiteSuperior = LocalDate.of(1900, 1, 1);
-        return dataNascimento.isBefore(dataAtual) && dataNascimento.isAfter(limiteSuperior);
+
+        return !dataNascimento.isAfter(dataAtual) && !dataNascimento.isBefore(limiteSuperior);
     }
 }

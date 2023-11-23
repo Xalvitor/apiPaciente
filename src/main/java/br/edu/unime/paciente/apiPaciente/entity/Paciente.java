@@ -38,6 +38,7 @@ public class Paciente {
     private LocalDate dataDeNascimento;
 
     @NotBlank(message = "Genero não pode ser nulo e não pode estar em branco.")
+    @Pattern(regexp = "^(Masculino|Feminino)$", message = "O Genero deve ou ser 'Masculino' ou 'Feminino'")
     private String genero;
 
     @NotEmpty(message = "Contatos não pode ser nulo e não pode estar em branco.")

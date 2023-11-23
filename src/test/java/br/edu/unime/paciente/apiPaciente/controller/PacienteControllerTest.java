@@ -3,7 +3,6 @@ package br.edu.unime.paciente.apiPaciente.controller;
 import br.edu.unime.paciente.apiPaciente.entity.Endereco;
 import br.edu.unime.paciente.apiPaciente.entity.Paciente;
 import br.edu.unime.paciente.apiPaciente.repository.PacienteRepository;
-import br.edu.unime.paciente.apiPaciente.validation.CPFunicoValidador;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -32,7 +31,6 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
@@ -301,7 +299,7 @@ public class PacienteControllerTest {
                         .content(pacienteJson))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.mensagem").value("Enderecos não pode ser nulo e não pode estar em branco."));
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0]").value("Enderecos não pode ser nulo e não pode estar em branco."));
 
     }
     @Test
@@ -346,7 +344,7 @@ public class PacienteControllerTest {
                         .content(pacienteJson))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.mensagem").value("A data de nascimento deve estar no passado e apenas até o ano 1900"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0]").value("A data de nascimento deve estar no passado e apenas até o ano 1900"));
 
     }
 
@@ -530,7 +528,7 @@ public class PacienteControllerTest {
                         .content(updatedPacienteJson))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.mensagem").value("Enderecos não pode ser nulo e não pode estar em branco."));
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0]").value("Enderecos não pode ser nulo e não pode estar em branco."));
 
     }
     @Test
